@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #main {
+            margin: auto;
+        }
+        #container{
+            margin-left: 40%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <a href="/admin.html">Admin</a>
+        
+        <div id="container">
+            <form>
+                <label for="">Name</label>
+                <br>
+                <input required id="name" placeholder="Please enter your name" type="text">
+                <br>
+                <br>
+                <label for="">Age</label>
+                <br>
+                <input required id="age" placeholder="Please enter your age" type="text">
+                <br>
+                <br>
+                <label for="">Place</label>
+                <br>
+                <input required id="place" placeholder="Please enter your place" type="text">
+                <br>
+                <br>
+                <label for="">Batch Name</label>
+                <br>
+                <select id="batch">
+                    <option disabled value="">Select Your Batch</option>
+                    <option value="WEB-13">WEB-13</option>
+                    <option value="WEB-14">WEB-14</option>
+                    <option value="WEB-15">WEB-15</option>
+                </select>
+                <br>
+                <br>
+                <label for="">Profession</label>
+                <br>
+                <select name="" id="profession">
+                    <option disabled value="">Select Your Profession</option>
+                    <option value="FSD">FSD</option>
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Student">Student</option>
+                </select>
+                <br>
+                <br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    const backendLink = `https://silly-jade-turtle.cyclic.app/users`;
+    const form = document.querySelector("form");
+    form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const name = document.getElementById("name");
+        const age = document.getElementById("age");
+        const place = document.getElementById("place");
+        const batch = document.getElementById("batch");
+        const profession = document.getElementById("profession");
+        let obj = {
+            id: Date.now()+Math.random(),
+            name : name.value,
+            age : +(age.value),
+            place : place.value,
+            batch_name : batch.value,
+            profession : profession.value
+        }
+        fetch(backendLink,{
+            method : "POST",
+            body : JSON.stringify(obj),
+            headers : {
+                "Content-Type": "application/json"
+            }
+        }).then((res)=>{
+            res.json()
+            })
+            .then((data)=>{
+            console.log(data)})
+
+        alert("successfully registered");
+    })
+</script>
+
+<!-- 1. Name
+2. Age
+3. Place 
+4. Batch Name (Select tag with WEB-13, WEB-14, WEB-15 etc as options)
+5. Profession (Select tag with FSD, Frontend, Backend, Student as options) -->

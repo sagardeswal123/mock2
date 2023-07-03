@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #functionality-part{
+            display: flex;
+            justify-content: space-around;
+        }
+        #card{
+            margin: 20px;
+            background-color: grey;
+        }
+        #container{
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+        }
+        #card-img{
+            margin-left: 18%;
+        }
+        #card-details{
+            margin-left: 20px;
+        }
+        #card-batch{
+            margin-left: 20px;
+        }
+        #edit-button{
+            margin-left: 20px;
+        }
+        #delete-button{
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div></div>
+        <div id="functionality-part">
+            <div>
+                <select name="" id="sort">
+                    <option value="">sort by age</option>
+                    <option value="asc">Age from low to high</option>
+                    <option value="desc">Age from high to low</option>
+                </select>
+            </div>
+            <div>
+                <select name="" id="filter">
+                    <option value="">filter by profession</option>
+                    <option value="FSD">FSD</option>
+                    <option value="Frontend">Frontend</option>
+                    <option value="Backend">Backend</option>
+                    <option value="Student">Student</option>
+                </select>
+            </div>
+            <div>
+                <label for="">Search</label>
+                <input id="name-search" type="text">
+            </div>
+        </div>
+        <div id="container"></div>
+    </div>
+</body>
+</html>
+
+<script>
+
+    const mainContainer = document.getElementById("container");
+
+
+    //sorting data
+    const sort = document.getElementById("sort");
+    sort.addEventListener("change",(e)=>{
+        e.preventDefault();
+        console.log(e.target.value)
+        fetch(`https://silly-jade-turtle.cyclic.app/users?_sort=age&_order=${e.target.value}`).then(res=>res.json()).then(data=>initialData(data));
+    })
+
+
+    //filtering data
+    const filter = document.getElementById('filter');
+    filter.addEventListener('change',(e)=>{
+        e.preventDefault();
+        console.log(e.target.value)
+        fetch(`https://silly-jade-turtle.cyclic.app/users?profession=${e.target.value}`).then(res=>res.json()).then(data=>initialData(data));
+    })
+
+    //search functionality
+    const searchFunctionality = document.getElementById("name-search");
+    searchFunctionality.addEventListener("change",(e)=>{
+        console.log(e.target.value)
+        fetch(`https://silly-jade-turtle.cyclic.app/users?name=${e.target.value}`).then(res=>res.json()).then(data=>initialData(data))
+    })
+
+    function renderOnitsOwn(){
+        fetch(`https://silly-jade-turtle.cyclic.app/users`).then(res=>res.json()).then(data=>initialData(data));
+    };
+    renderOnitsOwn()
+
+    function initialData(data){
+        mainContainer.innerHTML="";
+        mainContainer.innerHTML = (renderData(data))
+
+        let editButton = document.querySelectorAll("#edit-button")
+        editButton.forEach((button)=>{
+            button.addEventListener("click",(e)=>{
+                let id = (e.target.dataset.id);
+                let filteredData = data.filter((data)=>{
+                    return id == data.id;
+                })
+                editData(id,filteredData[0])
+            })
+        })
+        let deleteButton = document.querySelectorAll("#delete-button")
+        deleteButton.forEach((button)=>{
+            button.addEventListener("click",(e)=>{
+                let id = (e.target.dataset.id);
+                deleteData(id)
+            })
+        })
+    }
+
+    function editData (id,data){
+        console.log(id,data)
+    }
+
+    function deleteData (id){
+        console.log(id)
+        fetch(`https://silly-jade-turtle.cyclic.app/users`,{
+            method: "DELETE",
+            headers :{
+                "Content-Type": "application/json"
+            },
+            body : id
+        }).then(res=>res.json()).then(()=>renderOnitsOwn())
+    }
+
+
+    function renderData (data){
+        const img = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLG8XyiZ40xxteC5AIuz5B09uK0DRw6KfG0w&usqp=CAU`
+        return data.map((data)=>{
+            return `
+            <div id="card">
+                <img id="card-img" src=${img} alt="img" />
+                <div id="card-details">
+                    <h3>${data.name}</h3>
+                    <p>${data.age}</p>
+                    <p>${data.place}</p>
+                </div>
+                <div id="card-batch">
+                    <h3>${data.batch_name}</h3>
+                    <h3>${data.profession}</h3>
+                </div>
+                <button id="edit-button" data-id=${data.id}>Edit</button>
+                <button id="delete-button" data-id=${data.id}>Delete</button>
+            </div>
+            `
+        }).join("")
+    }
+
+    
+</script>

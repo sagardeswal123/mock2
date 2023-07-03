@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #navbar{
+            display: flex;
+            justify-content: space-around;
+            background-color: aqua;
+            padding: 20px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="navbar">
+            <a href="#">Login Page</a>
+            <a id="datapageref" href="">Data Page</a>
+            <a id="reportpageref" href="/reportPage.html">Report Page</a>
+        </div>
+        <div>
+            <form>
+                <label for="">Email</label>
+                <br>
+                <input id="email" type="text">
+                <br>
+                <br>
+                <label for="">Password</label>
+                <br>
+                <input id="password" type="text">
+                <br>
+                <br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    const reqresApi = `https://reqres.in/api/login`;
+
+    const form = document.querySelector("form");
+    form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        let obj = {
+            email: email.value,
+            password : password.value
+        }
+        fetch(reqresApi,{
+            method : "POST",
+            headers : {
+                "Content-Type": "application/json"
+            },
+            body : JSON.stringify(obj)
+        }).then(res=>res.json()).then((data)=>{console.log(data)
+        sessionStorage.setItem("token", data.token)
+        alert("login successful")
+        window.location = "/dataPage.html"
+        })
+    })
+
+    const DataPage = document.getElementById("datapageref");
+    let sessionData = sessionStorage.getItem("token");
+    if(sessionData.length == 0){
+        DataPage.href = "/"
+    }
+    if(sessionData.length>0){
+        DataPage.href="/dataPage.html"
+    }
+
+
+</script>
